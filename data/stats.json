@@ -1,0 +1,52 @@
+{
+  "pvp": {
+    "xWins": 0,
+    "oWins": 0,
+    "draws": 0,
+    "total": 0
+  },
+  "ai": {
+    "playerWins": 0,
+    "aiWins": 3,
+    "draws": 1,
+    "total": 4
+  },
+  "history": [
+    {
+      "id": "c58eb194-2526-4d1e-8e2c-b29b4037c29e",
+      "mode": "ai",
+      "difficulty": "hard",
+      "result": "IA venceu (O)",
+      "winner": "O",
+      "movesCount": 8,
+      "finishedAt": "2026-11-18T01:09:32.998Z"
+    },
+    {
+      "id": "8676b23d-6ab4-4dcf-a68b-68210763a05d",
+      "mode": "ai",
+      "difficulty": "hard",
+      "result": "IA venceu (O)",
+      "winner": "O",
+      "movesCount": 8,
+      "finishedAt": "2026-11-18T01:09:15.757Z"
+    },
+    {
+      "id": "771fe633-e753-4291-9f1d-1dd294d9d02a",
+      "mode": "ai",
+      "difficulty": "hard",
+      "result": "IA venceu (O)",
+      "winner": "O",
+      "movesCount": 6,
+      "finishedAt": "2026-11-18T01:09:05.224Z"
+    },
+    {
+      "id": "6953d239-fe8a-4631-845d-c2796f993512",
+      "mode": "ai",
+      "difficulty": "hard",
+      "result": "Empate",
+      "winner": null,
+      "movesCount": 9,
+      "finishedAt": "2026-11-18T01:09:00.375Z"
+    }
+  ]
+}

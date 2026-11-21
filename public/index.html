@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic-Tac-Toe | Node.js</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="bg-glow bg-glow-cyan" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow-rose" aria-hidden="true"></div>
+
+  <main class="container">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <span class="mark-x">X</span><span class="mark-o">O</span>
+        </div>
+        <div>
+          <h1>Tic-Tac-Toe</h1>
+          <p class="subtitle">Motor e IA Minimax rodando em Node.js</p>
+        </div>
+      </div>
+
+      <button id="soundToggleBtn" class="icon-btn" type="button" title="Alternar efeitos sonoros" aria-label="Alternar efeitos sonoros">
+        <span id="soundIcon">🔊</span>
+        <span id="soundLabel" class="icon-btn-label">Som ligado</span>
+      </button>
+    </header>
+
+    <div class="layout">
+      <!-- Painel Principal do Jogo -->
+      <section class="panel arena-panel" aria-label="Tabuleiro do Jogo">
+        <div class="controls-group">
+          <div class="segmented" role="tablist" aria-label="Modo de jogo">
+            <button type="button" class="seg-btn active" data-mode="ai" role="tab" aria-selected="true">
+              🤖 Contra IA (CPU)
+            </button>
+            <button type="button" class="seg-btn" data-mode="pvp" role="tab" aria-selected="false">
+              👥 2 Jogadores
+            </button>
+          </div>
+
+          <div id="aiOptions" class="ai-options">
+            <div class="option-row">
+              <span class="option-label">Dificuldade:</span>
+              <div class="pill-group" role="group" aria-label="Dificuldade da IA">
+                <button type="button" class="pill-btn" data-difficulty="easy">Fácil</button>
+                <button type="button" class="pill-btn" data-difficulty="medium">Médio</button>
+                <button type="button" class="pill-btn active" data-difficulty="hard">Imbatível</button>
+              </div>
+            </div>
+
+            <div class="option-row">
+              <span class="option-label">Jogar como:</span>
+              <div class="pill-group" role="group" aria-label="Escolher símbolo">
+                <button type="button" class="pill-btn active" data-mark="X">
+                  <strong class="text-x">X</strong> (1º)
+                </button>
+                <button type="button" class="pill-btn" data-mark="O">
+                  <strong class="text-o">O</strong> (2º)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placar da Sessão Atual -->
+        <div class="scoreboard" aria-label="Placar da sessão">
+          <div id="scoreCardX" class="score-card score-x active-turn">
+            <span id="labelX" class="score-title">Você (X)</span>
+            <strong id="scoreX" class="score-value">0</strong>
+          </div>
+          <div class="score-card score-draw">
+            <span class="score-title">Empates</span>
+            <strong id="scoreDraw" class="score-value">0</strong>
+          </div>
+          <div id="scoreCardO" class="score-card score-o">
+            <span id="labelO" class="score-title">IA (O)</span>
+            <strong id="scoreO" class="score-value">0</strong>
+          </div>
+        </div>
+
+        <!-- Status da Partida -->
+        <div id="statusBanner" class="status-banner" role="status" aria-live="polite">
+          <span id="statusDot" class="status-dot dot-x"></span>
+          <span id="statusText">Sua vez de jogar (X)</span>
+        </div>
+
+        <!-- Tabuleiro 3x3 -->
+        <div class="board-wrapper">
+          <div id="board" class="board" role="grid" aria-label="Tabuleiro 3 por 3">
+            <button type="button" class="cell" data-index="0" aria-label="Casa 1, linha 1 coluna 1"></button>
+            <button type="button" class="cell" data-index="1" aria-label="Casa 2, linha 1 coluna 2"></button>
+            <button type="button" class="cell" data-index="2" aria-label="Casa 3, linha 1 coluna 3"></button>
+            <button type="button" class="cell" data-index="3" aria-label="Casa 4, linha 2 coluna 1"></button>
+            <button type="button" class="cell" data-index="4" aria-label="Casa 5, linha 2 coluna 2"></button>
+            <button type="button" class="cell" data-index="5" aria-label="Casa 6, linha 2 coluna 3"></button>
+            <button type="button" class="cell" data-index="6" aria-label="Casa 7, linha 3 coluna 1"></button>
+            <button type="button" class="cell" data-index="7" aria-label="Casa 8, linha 3 coluna 2"></button>
+            <button type="button" class="cell" data-index="8" aria-label="Casa 9, linha 3 coluna 3"></button>
+          </div>
+
+          <!-- Linha animada de vitória -->
+          <svg id="winLineSvg" class="win-line-svg" viewBox="0 0 300 300" aria-hidden="true">
+            <line id="winLine" x1="0" y1="0" x2="0" y2="0" />
+          </svg>
+        </div>
+
+        <div class="arena-footer">
+          <button id="newGameBtn" type="button" class="primary-btn">
+            🔄 Nova Partida
+          </button>
+          <p class="hint-text">Atalhos: teclas <kbd>1</kbd>–<kbd>9</kbd> para jogar · <kbd>R</kbd> para reiniciar</p>
+        </div>
+      </section>
+
+      <!-- Painel Lateral: Estatísticas Persistentes & Histórico -->
+      <aside class="panel stats-panel" aria-label="Estatísticas e Histórico">
+        <div class="stats-header">
+          <h2>Estatísticas Gerais</h2>
+          <button id="resetStatsBtn" type="button" class="ghost-btn" title="Zerar placar salvo no servidor">
+            Zerar
+          </button>
+        </div>
+
+        <div class="stats-summary-grid">
+          <div class="summary-box">
+            <h3>🤖 Contra IA</h3>
+            <div class="summary-metrics">
+              <div><span>Vitórias</span><strong id="statAiPlayerWins" class="text-x">0</strong></div>
+              <div><span>Empates</span><strong id="statAiDraws">0</strong></div>
+              <div><span>Derrotas</span><strong id="statAiCpuWins" class="text-o">0</strong></div>
+            </div>
+          </div>
+
+          <div class="summary-box">
+            <h3>👥 2 Jogadores</h3>
+            <div class="summary-metrics">
+              <div><span>Vitórias X</span><strong id="statPvpXWins" class="text-x">0</strong></div>
+              <div><span>Empates</span><strong id="statPvpDraws">0</strong></div>
+              <div><span>Vitórias O</span><strong id="statPvpOWins" class="text-o">0</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="history-section">
+          <h3>Últimas Partidas</h3>
+          <ul id="historyList" class="history-list">
+            <li class="history-empty">Nenhuma partida finalizada ainda.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
